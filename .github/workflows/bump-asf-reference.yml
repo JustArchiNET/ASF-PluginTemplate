@@ -9,7 +9,7 @@ on:
 env:
   # You can specify your own credentials if you'd like to
   GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # If secret not provided, will skip using GPG key
-  PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN }} # If secret not provided, will use the default token
+  PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} # If secret not provided, will use the default token
 
 jobs:
   main:
@@ -18,6 +18,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2.3.4
+      with:
+        token: ${{ env.PUSH_GITHUB_TOKEN }}
 
     - name: Fetch latest ArchiSteamFarm release
       id: asf-release
@@ -59,15 +61,7 @@ jobs:
         fi
 
     - name: Push changes to the repo
-      if: ${{ env.PUSH_GITHUB_TOKEN != null }}
       uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ env.PUSH_GITHUB_TOKEN }}
-        branch: ${{ github.ref }}
-
-    - name: Push changes to the repo
-      if: ${{ env.PUSH_GITHUB_TOKEN == null }}
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.ref }}
