@@ -9,7 +9,7 @@ on:
 env:
   # You can specify your own credentials if you'd like to
   GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # If secret not provided, will skip using GPG key
-  PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} # If secret not provided, will use the default token
+  PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN }} # If secret not provided, will use the default token
 
 jobs:
   main:
@@ -56,6 +56,11 @@ jobs:
             fi
 
             git commit -m "Automatic ArchiSteamFarm reference update to ${LATEST_ASF_RELEASE}"
+        fi
+
+        # Reset PUSH_GITHUB_TOKEN back to GITHUB_TOKEN if secret not provided
+        if [ -z "$PUSH_GITHUB_TOKEN" ]; then
+            echo "PUSH_GITHUB_TOKEN=${GITHUB_TOKEN}" >> "$GITHUB_ENV"
         fi
 
     - name: Push changes to the repo
