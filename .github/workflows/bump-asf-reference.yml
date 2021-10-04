@@ -36,7 +36,6 @@ jobs:
         git_commit_gpgsign: true
 
     - name: Update ASF reference if needed
-      uses: actions/setup-dotnet@v1.8.2
       env:
         LATEST_ASF_RELEASE: ${{ steps.asf-release.outputs.release }}
       shell: sh
