@@ -47,6 +47,14 @@ jobs:
         git add -A ".gitmodules"
 
         if ! git diff --cached --quiet; then
+            if ! git config --get user.email > /dev/null; then
+                git config --local user.email "action@github.com"
+            fi
+
+            if ! git config --get user.name > /dev/null; then
+                git config --local user.name "GitHub Action"
+            fi
+
             git commit -m "Automatic ArchiSteamFarm reference update to ${LATEST_ASF_RELEASE}"
         fi
 
