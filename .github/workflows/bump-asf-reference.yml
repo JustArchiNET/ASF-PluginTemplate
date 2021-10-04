@@ -4,12 +4,15 @@
 name: MyAwesomePlugin-bump-asf-reference
 
 on:
+  schedule:
+  - cron: '17 1 * * *'
+
   workflow_dispatch:
 
 env:
-  # You can specify your own credentials if you'd like to
-  GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # If secret not provided, will skip using GPG key
-  PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} # If secret not provided, will use the default token
+  # You can specify your own credentials if you'd like to, simply change ARCHIBOT_GPG_PRIVATE_KEY and/or ARCHIBOT_GITHUB_TOKEN secrets here to the ones you want to use
+  GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # Optional, if secret not provided, will skip signing commit with GPG key
+  PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} # Optional, if secret not provided, will use the default token
 
 jobs:
   main:
