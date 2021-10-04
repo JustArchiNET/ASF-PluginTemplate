@@ -58,13 +58,16 @@ jobs:
             git commit -m "Automatic ArchiSteamFarm reference update to ${LATEST_ASF_RELEASE}"
         fi
 
-        # Reset PUSH_GITHUB_TOKEN back to GITHUB_TOKEN if secret not provided
-        if [ -z "$PUSH_GITHUB_TOKEN" ]; then
-            echo "PUSH_GITHUB_TOKEN=${GITHUB_TOKEN}" >> "$GITHUB_ENV"
-        fi
-
     - name: Push changes to the repo
+      if: ${{ env.PUSH_GITHUB_TOKEN != null }}
       uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ env.PUSH_GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+
+    - name: Push changes to the repo
+      if: ${{ env.PUSH_GITHUB_TOKEN == null }}
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ github.ref }}
