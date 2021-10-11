@@ -42,7 +42,7 @@ In theory, you don't need to do anything special further, just edit **[`MyAwesom
 
 ---
 
-### Recommended steps
+## Recommended steps
 
 Here we list steps that are **not mandatory**, but worthy to consider after using this repo as a template. While we'd recommend to cover all of those, it's totally alright if you don't. We ordered those according to our recommended priority.
 
@@ -55,21 +55,21 @@ Here we list steps that are **not mandatory**, but worthy to consider after usin
 
 ---
 
-### Worth mentioning
+## Worth mentioning
 
 Here we list things that do not require your immediate attention, but we consider worthy to know.
 
-#### Compilation
+### Compilation
 
 Simply execute `dotnet build MyAwesomePlugin` and find your binaries in `MyAwesomePlugin/bin` folder, which you can drag to ASF's `plugins` folder. Keep in mind however that your plugin build created this way is based on existence of your .NET SDK and might not work on other machines or other SDK versions - for creating actual package with your plugin use `dotnet publish MyAwesomePlugin -c Release -o out` command instead, which will create a more general, packaged version in `out` directory. Likewise, omit `-c Release` if for some reason you'd like more general `Debug` build instead.
 
-#### Library references
+### Library references
 
 Our plugin template uses centrally-managed packages. Simply add a version reference below our `Import` clause in **[`Directory.Packages.props`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/Directory.Packages.props#L2)**. Afterwards add a `PackageReference` to your **[`MyAwesomePlugin.csproj`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.csproj#L6-L10)** as usual, but without specifying a version (which we specified in `Directory.Packages.props`).
 
 Using centrally-managed NuGet packages is crucial in regards to integration with library versions used in the ASF submodule, especially the `System.Composition.AttributedModel` which your plugin should always have in the ASF matching version. This also means that you don't have to (and actually shouldn't) specify versions for all of the libraries that ASF defines on its own in **[`Directory.Packages.props`](https://github.com/JustArchiNET/ArchiSteamFarm/blob/main/Directory.Packages.props)** (that you conveniently inherit from).
 
-#### Renaming `MyAwesomePlugin`
+### Renaming `MyAwesomePlugin`
 
 You might be interested in renaming `MyAwesomePlugin` project into the one that suits your plugin. We've tried to keep the minimum amount of references, and we're listing here all of the places you should keep in mind:
 - **[`MyAwesomePlugin.csproj`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.csproj)**, renaming should be enough.
@@ -81,6 +81,6 @@ You might be interested in renaming `MyAwesomePlugin` project into the one that 
 
 Nothing else should be required to the best of our knowledge.
 
-#### Need help?
+### Need help?
 
 Feel free to ask in one of our **[support channels](https://github.com/JustArchiNET/ArchiSteamFarm/blob/main/.github/SUPPORT.md)**, where we'll be happy to offer you a helpful hand 😎.
