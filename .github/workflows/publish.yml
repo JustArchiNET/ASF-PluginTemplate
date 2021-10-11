@@ -162,16 +162,16 @@ jobs:
       continue-on-error: true
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: ${{ matrix.os }}_{{ env.PLUGIN_NAME }}-generic
-        path: out/{{ env.PLUGIN_NAME }}-generic.zip
+        name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic
+        path: out/${{ env.PLUGIN_NAME }}-generic.zip
 
     - name: Upload generic-netf
       continue-on-error: true
       if: startsWith(matrix.os, 'windows-')
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: ${{ matrix.os }}_{{ env.PLUGIN_NAME }}-generic-netf
-        path: out/{{ env.PLUGIN_NAME }}-generic-netf.zip
+        name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic-netf
+        path: out/${{ env.PLUGIN_NAME }}-generic-netf.zip
 
   release:
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
@@ -190,13 +190,13 @@ jobs:
     - name: Download generic artifact from windows-latest
       uses: actions/download-artifact@v2.0.10
       with:
-        name: windows-latest_{{ env.PLUGIN_NAME }}-generic
+        name: windows-latest_${{ env.PLUGIN_NAME }}-generic
         path: out
 
     - name: Download generic-netf artifact from windows-latest
       uses: actions/download-artifact@v2.0.10
       with:
-        name: windows-latest_{{ env.PLUGIN_NAME }}-generic-netf
+        name: windows-latest_${{ env.PLUGIN_NAME }}-generic-netf
         path: out
 
     - name: Create GitHub release
@@ -206,7 +206,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
-        release_name: {{ env.PLUGIN_NAME }} V${{ github.ref }}
+        release_name: ${{ env.PLUGIN_NAME }} V${{ github.ref }}
         body_path: .github/RELEASE_TEMPLATE.md
         prerelease: true
 
@@ -216,8 +216,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.github_release.outputs.upload_url }}
-        asset_path: out/{{ env.PLUGIN_NAME }}-generic.zip
-        asset_name: {{ env.PLUGIN_NAME }}-generic.zip
+        asset_path: out/${{ env.PLUGIN_NAME }}-generic.zip
+        asset_name: ${{ env.PLUGIN_NAME }}-generic.zip
         asset_content_type: application/zip
 
     - name: Upload generic-netf to GitHub release
@@ -226,6 +226,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.github_release.outputs.upload_url }}
-        asset_path: out/{{ env.PLUGIN_NAME }}-generic-netf.zip
-        asset_name: {{ env.PLUGIN_NAME }}-generic-netf.zip
+        asset_path: out/${{ env.PLUGIN_NAME }}-generic-netf.zip
+        asset_name: ${{ env.PLUGIN_NAME }}-generic-netf.zip
         asset_content_type: application/zip
