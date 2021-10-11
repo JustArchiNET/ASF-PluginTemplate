@@ -23,7 +23,7 @@ Simply click the "Use this template" button in the top-right of the **[main repo
 
 For cloning your git repository, use `git clone --recursive` option in order to pull ASF reference along with your plugin, which you'll require during compilation. See **[git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)** for more info.
 
-After using the template and cloning git repo, assuming you have everything required as specified on **[compilation](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/Compilation)** page on our wiki, try to build your project with `dotnet build MyAwesomePlugin`, it should succeed without any issues, which means you're all set.
+After using the template and cloning git repo, assuming you have everything required as specified in **[compilation](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/Compilation)** page on our wiki, try to build your project with `dotnet build MyAwesomePlugin`, it should succeed without any issues, which means you're all set.
 
 In theory, you don't need to do anything special further, just edit **[`MyAwesomePlugin/MyAwesomePlugin.cs`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs)** file and get going with your plugin logic. However, there are some things we recommend on doing in addition to above steps, and some we highlight as a possibility in case you'd be interested in them. It's now up to you what you want to do next.
 
