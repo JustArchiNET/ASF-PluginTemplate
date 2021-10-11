@@ -1,4 +1,4 @@
-name: MyAwesomePlugin-ci
+name: Plugin-ci
 
 on: [push, pull_request]
 
@@ -31,5 +31,5 @@ jobs:
     - name: Verify .NET Core
       run: dotnet --info
 
-    - name: Build ${{ matrix.configuration }} MyAwesomePlugin
+    - name: Build ${{ matrix.configuration }}
       run: dotnet build -c "${{ matrix.configuration }}" -p:ContinuousIntegrationBuild=true -p:UseAppHost=false --nologo

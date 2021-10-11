@@ -1,4 +1,4 @@
-name: MyAwesomePlugin-publish
+name: Plugin-publish
 
 on: [push, pull_request]
 
@@ -46,7 +46,7 @@ jobs:
         set -eu
 
         publish() {
-            dotnet publish "$PLUGIN_NAME" -c "$CONFIGURATION" -f "$NET_CORE_VERSION" -o "out/${1}" -p:ContinuousIntegrationBuild=true -p:TargetLatestRuntimePatch=false -p:UseAppHost=false --no-restore --nologo $variantArgs
+            dotnet publish "$PLUGIN_NAME" -c "$CONFIGURATION" -f "$NET_CORE_VERSION" -o "out/${1}" -p:ContinuousIntegrationBuild=true -p:TargetLatestRuntimePatch=false -p:UseAppHost=false --no-restore --nologo
 
             # By default use fastest compression
             seven_zip_args="-mx=1"
@@ -107,7 +107,7 @@ jobs:
     - name: Publish plugin on Windows
       if: startsWith(matrix.os, 'windows-')
       env:
-        VARIANTS: generic generic-netf # NOTE: When modifying variants, don't forget to update ASF_VARIANT definitions in SharedInfo.cs!
+        VARIANTS: generic generic-netf
       shell: pwsh
       run: |
         Set-StrictMode -Version Latest

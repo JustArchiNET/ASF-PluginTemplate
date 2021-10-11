@@ -2,6 +2,7 @@
 	<Import Project="ArchiSteamFarm/Directory.Build.props" />
 
 	<PropertyGroup Condition="$(MSBuildProjectName) != 'ArchiSteamFarm'">
+		<PluginName>MyAwesomePlugin</PluginName>
 		<Version>1.0.0.0</Version>
 	</PropertyGroup>
 
@@ -10,27 +11,27 @@
 		<Authors>YourName</Authors>
 		<Company>$(Authors)</Company>
 		<Copyright>Copyright © 2021-$([System.DateTime]::UtcNow.Year) $(Company)</Copyright>
-		<Description>MyAwesomePlugin is awesome.</Description>
+		<Description>$(PluginName) description.</Description>
 		<PackageIcon />
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/$(Company)/MyAwesomePlugin</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/$(Company)/$(PluginName)</PackageProjectUrl>
 		<PackageReleaseNotes>$(PackageProjectUrl)/releases</PackageReleaseNotes>
 		<RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(MSBuildProjectName) != 'ArchiSteamFarm' AND '$(Configuration)' == 'Release'">
-		<AssemblyOriginatorKeyFile>../resources/MyAwesomePlugin.snk.pub</AssemblyOriginatorKeyFile>
+		<AssemblyOriginatorKeyFile>../resources/$(PluginName).snk.pub</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
 
 	<!-- Public SNK signing -->
-	<PropertyGroup Condition="$(MSBuildProjectName) != 'ArchiSteamFarm' AND '$(Configuration)' == 'Release' AND !EXISTS('resources/MyAwesomePlugin.snk.pub')">
+	<PropertyGroup Condition="$(MSBuildProjectName) != 'ArchiSteamFarm' AND '$(Configuration)' == 'Release' AND !EXISTS('resources/$(PluginName).snk.pub')">
 		<PublicSign>false</PublicSign>
 		<SignAssembly>false</SignAssembly>
 	</PropertyGroup>
 
 	<!-- Private SNK signing -->
-	<PropertyGroup Condition="$(MSBuildProjectName) != 'ArchiSteamFarm' AND '$(Configuration)' == 'Release' AND EXISTS('resources/MyAwesomePlugin.snk')">
-		<AssemblyOriginatorKeyFile>../resources/MyAwesomePlugin.snk</AssemblyOriginatorKeyFile>
+	<PropertyGroup Condition="$(MSBuildProjectName) != 'ArchiSteamFarm' AND '$(Configuration)' == 'Release' AND EXISTS('resources/$(PluginName).snk')">
+		<AssemblyOriginatorKeyFile>../resources/$(PluginName).snk</AssemblyOriginatorKeyFile>
 		<PublicSign>false</PublicSign>
 		<SignAssembly>true</SignAssembly>
 	</PropertyGroup>
