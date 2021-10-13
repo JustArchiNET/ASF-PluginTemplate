@@ -52,6 +52,7 @@ Here we list steps that are **not mandatory**, but worthy to consider after usin
 - Fill **[`SECURITY.md`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/.github/SECURITY.md)** file, so your users can learn where they should report critical security issues in regards to your plugin.
 - If you want to use **[Renovate bot](https://github.com/renovatebot/renovate)** like we do, we recommend to modify the `:assignee()` block in our **[`renovate.json5`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/.github/renovate.json5#L5)** config file and putting your own GitHub username there. This will allow Renovate bot to assign failing PR to you so you can take a look at it. Everything else can stay as it is, unless you want to modify it of course.
 - Provide your own **[`CODE_OF_CONDUCT.md`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/.github/CODE_OF_CONDUCT.md#enforcement)** if you'd like to. If you're fine with ours, you can simply replace `TODO@example.com` e-mail with your own.
+- Provide your own **[`FUNDING.yml`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/.github/FUNDING.yml)** if you'd like to. By default the template comes with the funding available for the main ASF project, which you're free to keep, remove, or replace with your own.
 
 ---
 
