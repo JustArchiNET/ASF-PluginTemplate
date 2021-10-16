@@ -30,7 +30,7 @@ jobs:
       with:
         owner: JustArchiNET
         repo: ArchiSteamFarm
-        excludes: draft, prerelease
+        excludes: draft,prerelease
 
     - name: Import GPG key for signing
       uses: crazy-max/ghaction-import-gpg@v4.1.0
