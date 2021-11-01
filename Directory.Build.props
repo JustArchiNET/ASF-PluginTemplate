@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 		<ApplicationIcon />
 		<Authors>YourName</Authors>
 		<Company>$(Authors)</Company>
@@ -19,6 +20,13 @@
 		<RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
 	</PropertyGroup>
 
+	<!-- Default configuration for fast-debugging builds -->
+	<PropertyGroup Condition="'$(Configuration)' == 'DebugFast'">
+		<AnalysisMode>AllDisabledByDefault</AnalysisMode>
+		<DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+	</PropertyGroup>
+
+	<!-- Default configuration for release builds -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<AssemblyOriginatorKeyFile>../resources/$(PluginName).snk.pub</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
