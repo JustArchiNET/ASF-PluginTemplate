@@ -11,6 +11,10 @@
 
 ---
 
+[![Repobeats analytics image](https://repobeats.axiom.co/api/embed/4aa3ac833c7593826ac47ccfdc49c46ae27abb3d.svg "Repobeats analytics image")](https://github.com/JustArchiNET/ASF-PluginTemplate/pulse)
+
+---
+
 ## Description
 
 ASF-PluginTemplate is a template repository that you can use for creating custom **[plugins](https://github.com/JustArchiNET/ArchiSteamFarm/wiki/Plugins)** for **[ArchiSteamFarm](https://github.com/JustArchiNET/ArchiSteamFarm)**. This template has everything needed to kickstart the structure of your custom ASF plugin. Most importantly, from viewpoint of a project not related to ASF whatsoever while making use of its best practices.
