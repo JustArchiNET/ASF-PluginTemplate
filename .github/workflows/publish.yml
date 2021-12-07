@@ -160,7 +160,7 @@ jobs:
 
     - name: Upload generic
       continue-on-error: true
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v2.3.0
       with:
         name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic
         path: out/${{ env.PLUGIN_NAME }}-generic.zip
@@ -168,7 +168,7 @@ jobs:
     - name: Upload generic-netf
       continue-on-error: true
       if: startsWith(matrix.os, 'windows-')
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v2.3.0
       with:
         name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic-netf
         path: out/${{ env.PLUGIN_NAME }}-generic-netf.zip
