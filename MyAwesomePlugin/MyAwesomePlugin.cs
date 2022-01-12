@@ -13,7 +13,7 @@ internal sealed class MyAwesomePlugin : IPlugin {
 	public Version Version => typeof(MyAwesomePlugin).Assembly.GetName().Version ?? throw new InvalidOperationException(nameof(Version));
 
 	public Task OnLoaded() {
-		ASF.ArchiLogger.LogGenericInfo($"Hello ${Name}!");
+		ASF.ArchiLogger.LogGenericInfo($"Hello {Name}!");
 
 		return Task.CompletedTask;
 	}
