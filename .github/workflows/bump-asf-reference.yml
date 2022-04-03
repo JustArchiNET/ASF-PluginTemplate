@@ -1,6 +1,7 @@
 # This action is responsible for automatically bumping the ArchiSteamFarm submodule reference to the latest stable release
 # Please note that this DOES NOT update the actual commit the submodule itself is binded to, as that part is the responsibility of the developer or chosen dependencies management tool (such as Renovate or Dependabot), that will actually build and test whether the plugin project requires any kind of corrections before doing so
 # Because of that, commit created through this workflow can't possibly create any kind of build regression, as we only limit the actual commit the above action can actually update to
+# Note: If you'd like to change the default channel from stable to pre-releases, simply remove "prerelease" from "excludes" property further below
 name: Plugin-bump-asf-reference
 
 on:
