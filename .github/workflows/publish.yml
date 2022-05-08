@@ -159,14 +159,12 @@ jobs:
         Get-Job | Receive-Job -Wait
 
     - name: Upload generic
-      continue-on-error: true
       uses: actions/upload-artifact@v3.0.0
       with:
         name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic
         path: out/${{ env.PLUGIN_NAME }}-generic.zip
 
     - name: Upload generic-netf
-      continue-on-error: true
       if: startsWith(matrix.os, 'windows-')
       uses: actions/upload-artifact@v3.0.0
       with:
