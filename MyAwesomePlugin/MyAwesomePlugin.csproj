@@ -16,4 +16,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ArchiSteamFarm\ArchiSteamFarm\ArchiSteamFarm.csproj" ExcludeAssets="all" Private="false" />
 	</ItemGroup>
+	
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="COPY /Y &quot;$(TargetPath)&quot; &quot;$(SolutionDir)ArchiSteamFarm\ArchiSteamFarm\bin\$(Configuration)\net6.0\plugins\$(TargetFileName)&quot;" />
+  	</Target>
 </Project>
