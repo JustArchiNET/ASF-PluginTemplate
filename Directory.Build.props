@@ -39,4 +39,8 @@
 		<PublicSign>false</PublicSign>
 		<SignAssembly>true</SignAssembly>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+		<PackageReference Include="JustArchiNET.Madness" IncludeAssets="compile" />
+	</ItemGroup>
 </Project>
