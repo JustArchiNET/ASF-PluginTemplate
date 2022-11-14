@@ -93,16 +93,11 @@ jobs:
             esac
         }
 
-        jobs=""
-
         for variant in $VARIANTS; do
             publish "$variant" &
-            jobs="$jobs $!"
         done
 
-        for job in $jobs; do
-            wait "$job"
-        done
+        wait
 
     - name: Publish plugin on Windows
       if: startsWith(matrix.os, 'windows-')
