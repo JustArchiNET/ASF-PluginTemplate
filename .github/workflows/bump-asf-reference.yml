@@ -1,7 +1,7 @@
 # This action is responsible for automatically bumping the ArchiSteamFarm submodule reference to the latest stable release
 # Please note that this DOES NOT update the actual commit the submodule itself is binded to, as that part is the responsibility of the developer or chosen dependencies management tool (such as Renovate or Dependabot), that will actually build and test whether the plugin project requires any kind of corrections before doing so
 # Because of that, commit created through this workflow can't possibly create any kind of build regression, as we only limit the actual commit the above action can actually update to
-# Note: If you'd like to change the default channel from stable to pre-releases, simply remove "prerelease" from "excludes" property further below
+# Note: If you'd like to change the default channel from stable to pre-releases, simply change RELEASE_TYPE
 name: Plugin-bump-asf-reference
 
 on:
@@ -14,6 +14,7 @@ env:
   # You can specify your own credentials if you'd like to, simply change ARCHIBOT_GPG_PRIVATE_KEY and/or ARCHIBOT_GITHUB_TOKEN secrets here to the ones you want to use
   GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # Optional, if secret not provided, will skip signing commit with GPG key
   PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} # Optional, if secret not provided, will use the default token
+  RELEASE_TYPE: stable # Recommended to choose one from: stable (latest ASF stable release), nodraft (latest ASF release, including pre-releases, but without drafts)
 
 jobs:
   main:
@@ -27,11 +28,11 @@ jobs:
 
     - name: Fetch latest ArchiSteamFarm release
       id: asf-release
-      uses: pozetroninc/github-action-get-latest-release@v0.6.0
+      uses: rez0n/actions-github-release@v1.8
       with:
-        owner: JustArchiNET
-        repo: ArchiSteamFarm
-        excludes: draft,prerelease
+        repository: JustArchiNET/ArchiSteamFarm
+        token: ${{ secrets.GITHUB_TOKEN }}
+        type: ${{ env.RELEASE_TYPE }}
 
     - name: Import GPG key for signing
       uses: crazy-max/ghaction-import-gpg@v5.2.0
