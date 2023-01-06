@@ -154,14 +154,14 @@ jobs:
         Get-Job | Receive-Job -Wait
 
     - name: Upload generic
-      uses: actions/upload-artifact@v3.1.1
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic
         path: out/${{ env.PLUGIN_NAME }}-generic.zip
 
     - name: Upload generic-netf
       if: startsWith(matrix.os, 'windows-')
-      uses: actions/upload-artifact@v3.1.1
+      uses: actions/upload-artifact@v3.1.2
       with:
         name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic-netf
         path: out/${{ env.PLUGIN_NAME }}-generic-netf.zip
