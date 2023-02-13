@@ -28,7 +28,7 @@ jobs:
 
     - name: Fetch latest ArchiSteamFarm release
       id: asf-release
-      uses: rez0n/actions-github-release@v1.8
+      uses: rez0n/actions-github-release@v2.0
       env:
         repository: JustArchiNET/ArchiSteamFarm
         token: ${{ secrets.GITHUB_TOKEN }}
