@@ -188,32 +188,11 @@ jobs:
         path: out
 
     - name: Create GitHub release
-      id: github_release
-      uses: actions/create-release@v1.1.4
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: ncipollo/release-action@v1.12.0
       with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ env.PLUGIN_NAME }} V${{ github.ref }}
-        body_path: .github/RELEASE_TEMPLATE.md
+        artifacts: "out/*"
+        bodyFile: .github/RELEASE_TEMPLATE.md
+        makeLatest: false
+        name: ${{ env.PLUGIN_NAME }} V${{ github.ref_name }}
         prerelease: true
-
-    - name: Upload generic to GitHub release
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.github_release.outputs.upload_url }}
-        asset_path: out/${{ env.PLUGIN_NAME }}-generic.zip
-        asset_name: ${{ env.PLUGIN_NAME }}-generic.zip
-        asset_content_type: application/zip
-
-    - name: Upload generic-netf to GitHub release
-      uses: actions/upload-release-asset@v1.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.github_release.outputs.upload_url }}
-        asset_path: out/${{ env.PLUGIN_NAME }}-generic-netf.zip
-        asset_name: ${{ env.PLUGIN_NAME }}-generic-netf.zip
-        asset_content_type: application/zip
+        token: ${{ secrets.GITHUB_TOKEN }}
