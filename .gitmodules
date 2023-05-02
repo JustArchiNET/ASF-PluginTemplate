@@ -1,4 +1,4 @@
 [submodule "ArchiSteamFarm"]
 	path = ArchiSteamFarm
 	url = https://github.com/JustArchiNET/ArchiSteamFarm.git
-	branch = 5.4.4.5
+	branch = 5.4.5.2
