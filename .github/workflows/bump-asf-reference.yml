@@ -24,6 +24,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4.0.0
       with:
+        show-progress: false
         token: ${{ env.PUSH_GITHUB_TOKEN }}
 
     - name: Fetch latest ArchiSteamFarm release
