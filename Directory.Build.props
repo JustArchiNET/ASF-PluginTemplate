@@ -7,11 +7,10 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 		<ApplicationIcon />
 		<Authors>YourName</Authors>
 		<Company>$(Authors)</Company>
-		<Copyright>Copyright © 2022-$([System.DateTime]::UtcNow.Year) $(Company)</Copyright>
+		<Copyright>Copyright © $([System.DateTime]::UtcNow.Year) $(Company)</Copyright>
 		<Description>$(PluginName) description.</Description>
 		<PackageIcon />
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
