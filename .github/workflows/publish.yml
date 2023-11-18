@@ -6,9 +6,7 @@ env:
   CONFIGURATION: Release
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_NOLOGO: true
-  DOTNET_SDK_VERSION: 7.0.x
-  NET_CORE_VERSION: net7.0
-  NET_FRAMEWORK_VERSION: net481
+  DOTNET_SDK_VERSION: 8.0
   PLUGIN_NAME: MyAwesomePlugin
 
 jobs:
@@ -35,137 +33,95 @@ jobs:
     - name: Verify .NET Core
       run: dotnet --info
 
-    - name: Restore packages in preparation for plugin publishing
-      run: dotnet restore ${{ env.PLUGIN_NAME }} -p:ContinuousIntegrationBuild=true --nologo
-
     - name: Publish plugin on Unix
       if: startsWith(matrix.os, 'macos-') || startsWith(matrix.os, 'ubuntu-')
-      env:
-        VARIANTS: generic
       shell: sh
       run: |
         set -eu
 
-        publish() {
-            dotnet publish "$PLUGIN_NAME" -c "$CONFIGURATION" -f "$NET_CORE_VERSION" -o "out/${1}/${PLUGIN_NAME}" -p:ContinuousIntegrationBuild=true -p:TargetLatestRuntimePatch=false -p:UseAppHost=false --no-restore --nologo
+        dotnet publish "$PLUGIN_NAME" -c "$CONFIGURATION" -o "out/plugin/${PLUGIN_NAME}" -p:ContinuousIntegrationBuild=true -p:TargetLatestRuntimePatch=false -p:UseAppHost=false --nologo
 
-            # By default use fastest compression
-            seven_zip_args="-mx=1"
-            zip_args="-1"
+        # By default use fastest compression
+        seven_zip_args="-mx=1"
+        zip_args="-1"
 
-            # Include extra logic for builds marked for release
-            case "$GITHUB_REF" in
-                "refs/tags/"*)
-                    # Tweak compression args for release publishing
-                    seven_zip_args="-mx=9 -mfb=258 -mpass=15"
-                    zip_args="-9"
-                    ;;
-            esac
+        # Include extra logic for builds marked for release
+        case "$GITHUB_REF" in
+            "refs/tags/"*)
+                # Tweak compression args for release publishing
+                seven_zip_args="-mx=9 -mfb=258 -mpass=15"
+                zip_args="-9"
+                ;;
+        esac
 
-            # Create the final zip file
-            case "$(uname -s)" in
-                "Darwin")
-                    # We prefer to use zip on OS X as 7z implementation on that OS doesn't handle file permissions (chmod +x)
-                    if command -v zip >/dev/null; then
-                        (
-                            cd "${GITHUB_WORKSPACE}/out/${1}"
-                            zip -q -r $zip_args "../${PLUGIN_NAME}-${1}.zip" .
-                        )
-                    elif command -v 7z >/dev/null; then
-                        7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}-${1}.zip" "${GITHUB_WORKSPACE}/out/${1}/*"
-                    else
-                        echo "ERROR: No supported zip tool!"
-                        return 1
-                    fi
-                    ;;
-                *)
-                    if command -v 7z >/dev/null; then
-                        7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}-${1}.zip" "${GITHUB_WORKSPACE}/out/${1}/*"
-                    elif command -v zip >/dev/null; then
-                        (
-                            cd "${GITHUB_WORKSPACE}/out/${1}"
-                            zip -q -r $zip_args "../${PLUGIN_NAME}-${1}.zip" .
-                        )
-                    else
-                        echo "ERROR: No supported zip tool!"
-                        return 1
-                    fi
-                    ;;
-            esac
-        }
-
-        for variant in $VARIANTS; do
-            publish "$variant" &
-        done
-
-        wait
+        # Create the final zip file
+        case "$(uname -s)" in
+            "Darwin")
+                # We prefer to use zip on OS X as 7z implementation on that OS doesn't handle file permissions (chmod +x)
+                if command -v zip >/dev/null; then
+                    (
+                        cd "${GITHUB_WORKSPACE}/out/plugin"
+                        zip -q -r $zip_args "../${PLUGIN_NAME}.zip" .
+                    )
+                elif command -v 7z >/dev/null; then
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/*"
+                else
+                    echo "ERROR: No supported zip tool!"
+                    return 1
+                fi
+                ;;
+            *)
+                if command -v 7z >/dev/null; then
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/*"
+                elif command -v zip >/dev/null; then
+                    (
+                        cd "${GITHUB_WORKSPACE}/out/plugin"
+                        zip -q -r $zip_args "../${PLUGIN_NAME}.zip" .
+                    )
+                else
+                    echo "ERROR: No supported zip tool!"
+                    return 1
+                fi
+                ;;
+        esac
 
     - name: Publish plugin on Windows
       if: startsWith(matrix.os, 'windows-')
-      env:
-        VARIANTS: generic generic-netf
       shell: pwsh
       run: |
         Set-StrictMode -Version Latest
         $ErrorActionPreference = 'Stop'
         $ProgressPreference = 'SilentlyContinue'
 
-        $PublishBlock = {
-            param($variant)
+        Set-Location "$env:GITHUB_WORKSPACE"
 
-            Set-StrictMode -Version Latest
-            $ErrorActionPreference = 'Stop'
-            $ProgressPreference = 'SilentlyContinue'
+        dotnet publish "$env:PLUGIN_NAME" -c "$env:CONFIGURATION" -o "out\plugin\$env:PLUGIN_NAME" -p:ContinuousIntegrationBuild=true -p:TargetLatestRuntimePatch=false -p:UseAppHost=false --nologo
 
-            Set-Location "$env:GITHUB_WORKSPACE"
-
-            if ($variant -like '*-netf') {
-                $targetFramework = $env:NET_FRAMEWORK_VERSION
-            } else {
-                $targetFramework = $env:NET_CORE_VERSION
-            }
-
-            dotnet publish "$env:PLUGIN_NAME" -c "$env:CONFIGURATION" -f "$targetFramework" -o "out\$variant\$env:PLUGIN_NAME" -p:ContinuousIntegrationBuild=true -p:TargetLatestRuntimePatch=false -p:UseAppHost=false --no-restore --nologo
-
-            if ($LastExitCode -ne 0) {
-                throw "Last command failed."
-            }
-
-            # By default use fastest compression
-            $compressionArgs = '-mx=1'
-
-            # Include extra logic for builds marked for release
-            if ($env:GITHUB_REF -like 'refs/tags/*') {
-                # Tweak compression args for release publishing
-                $compressionArgs = '-mx=9', '-mfb=258', '-mpass=15'
-            }
-
-            # Create the final zip file
-            7z a -bd -slp -tzip -mm=Deflate $compressionArgs "out\$env:PLUGIN_NAME-$variant.zip" "$env:GITHUB_WORKSPACE\out\$variant\*"
-
-            if ($LastExitCode -ne 0) {
-                throw "Last command failed."
-            }
+        if ($LastExitCode -ne 0) {
+            throw "Last command failed."
         }
 
-        foreach ($variant in $env:VARIANTS.Split([char[]] $null, [System.StringSplitOptions]::RemoveEmptyEntries)) {
-            Start-Job -Name "$variant" $PublishBlock -ArgumentList "$variant"
+        # By default use fastest compression
+        $compressionArgs = '-mx=1'
+
+        # Include extra logic for builds marked for release
+        if ($env:GITHUB_REF -like 'refs/tags/*') {
+            # Tweak compression args for release publishing
+            $compressionArgs = '-mx=9', '-mfb=258', '-mpass=15'
         }
 
-        Get-Job | Receive-Job -Wait
+        # Create the final zip file
+        7z a -bd -slp -tzip -mm=Deflate $compressionArgs "out\$env:PLUGIN_NAME.zip" "$env:GITHUB_WORKSPACE\out\plugin\*"
 
-    - name: Upload generic
+        if ($LastExitCode -ne 0) {
+            throw "Last command failed."
+        }
+
+    - name: Upload plugin artifact
       uses: actions/upload-artifact@v3.1.3
       with:
-        name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic
-        path: out/${{ env.PLUGIN_NAME }}-generic.zip
-
-    - name: Upload generic-netf
-      if: startsWith(matrix.os, 'windows-')
-      uses: actions/upload-artifact@v3.1.3
-      with:
-        name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}-generic-netf
-        path: out/${{ env.PLUGIN_NAME }}-generic-netf.zip
+        name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}
+        path: out/${{ env.PLUGIN_NAME }}.zip
 
   release:
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
@@ -178,16 +134,10 @@ jobs:
       with:
         show-progress: false
 
-    - name: Download generic artifact from ubuntu-latest
+    - name: Download plugin artifact from ubuntu-latest
       uses: actions/download-artifact@v3.0.2
       with:
-        name: ubuntu-latest_${{ env.PLUGIN_NAME }}-generic
-        path: out
-
-    - name: Download generic-netf artifact from windows-latest
-      uses: actions/download-artifact@v3.0.2
-      with:
-        name: windows-latest_${{ env.PLUGIN_NAME }}-generic-netf
+        name: ubuntu-latest_${{ env.PLUGIN_NAME }}
         path: out
 
     - name: Create GitHub release
