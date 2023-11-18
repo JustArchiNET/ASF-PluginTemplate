@@ -50,21 +50,25 @@ jobs:
       run: |
         set -eu
 
+        current_version="$(git config -f .gitmodules submodule.ArchiSteamFarm.branch)"
+
+        if dpkg --compare-versions "$current_version" "ge" "$LATEST_ASF_RELEASE"; then
+            exit
+        fi
+
         git config -f .gitmodules submodule.ArchiSteamFarm.branch "$LATEST_ASF_RELEASE"
 
         git add -A ".gitmodules"
 
-        if ! git diff --cached --quiet; then
-            if ! git config --get user.email > /dev/null; then
-                git config --local user.email "action@github.com"
-            fi
-
-            if ! git config --get user.name > /dev/null; then
-                git config --local user.name "GitHub Action"
-            fi
-
-            git commit -m "Automatic ArchiSteamFarm reference update to ${LATEST_ASF_RELEASE}"
+        if ! git config --get user.email > /dev/null; then
+            git config --local user.email "action@github.com"
         fi
+
+        if ! git config --get user.name > /dev/null; then
+            git config --local user.name "GitHub Action"
+        fi
+
+        git commit -m "Automatic ArchiSteamFarm reference update to ${LATEST_ASF_RELEASE}"
 
     - name: Push changes to the repo
       uses: ad-m/github-push-action@v0.8.0
