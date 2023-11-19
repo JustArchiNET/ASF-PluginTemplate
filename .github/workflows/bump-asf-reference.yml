@@ -16,6 +16,8 @@ env:
   PUSH_GITHUB_TOKEN: ${{ secrets.ARCHIBOT_GITHUB_TOKEN || secrets.GITHUB_TOKEN }} # Optional, if secret not provided, will use the default token
   RELEASE_TYPE: stable # Recommended to choose one from: stable (latest ASF stable release), nodraft (latest ASF release, including pre-releases, but without drafts)
 
+permissions: {}
+
 jobs:
   main:
     runs-on: ubuntu-latest

@@ -10,6 +10,8 @@ env:
   GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # Optional, if secret not provided, will skip signing SHA512SUMS with GPG key. You can specify your own credentials if you'd like to, simply change ARCHIBOT_GPG_PRIVATE_KEY here to the one you want to use
   PLUGIN_NAME: MyAwesomePlugin
 
+permissions: {}
+
 jobs:
   publish:
     strategy:
@@ -128,6 +130,9 @@ jobs:
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     needs: publish
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout code
