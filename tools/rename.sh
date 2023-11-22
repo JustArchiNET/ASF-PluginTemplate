@@ -43,23 +43,23 @@ ERROR() {
 }
 
 COLOR_DARK_GRAY() {
-	echo "\033[1;30m$*\033[0m"
+	printf "\033[1;30m%s\033[0m\n" "$*"
 }
 
 COLOR_RED() {
-	echo "\033[1;31m$*\033[0m"
+	printf "\033[1;31m%s\033[0m\n" "$*"
 }
 
 COLOR_GREEN() {
-	echo "\033[1;32m$*\033[0m"
+	printf "\033[1;32m%s\033[0m\n" "$*"
 }
 
 COLOR_YELLOW() {
-	echo "\033[1;33m$*\033[0m"
+	printf "\033[1;33m%s\033[0m\n" "$*"
 }
 
 COLOR_WHITE() {
-	echo "\033[1;37m$*\033[0m"
+	printf "\033[1;37m%s\033[0m\n" "$*"
 }
 
 GET_INPUT_BOOL() {
@@ -75,7 +75,7 @@ GET_INPUT_BOOL() {
 	esac
 
 	while :; do
-		echo -n "${1} [${helper_text}]: " 1>&2
+		printf "%s " "${1} [${helper_text}]:" 1>&2
 		read -r user_input
 
 		if [ -z "$user_input" ]; then
@@ -96,7 +96,7 @@ GET_INPUT_STRING() {
 		return 1
 	fi
 
-	echo -n "${1} ["${2}"]: " 1>&2
+	printf "%s " "${1} [${2}]:" 1>&2
 	read -r user_input
 
 	if [ -z "$user_input" ]; then
