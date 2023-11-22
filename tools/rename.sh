@@ -184,10 +184,16 @@ fi
 if [ -f "../.github/renovate.json5" ]; then
 	from_github_username="$(grep -F ":assignee(" "../.github/renovate.json5" | cut -d '(' -f 2 | cut -d ')' -f 1)"
 
-	INFO "Detected current GitHub username: ${from_github_username}"
+	if [ -n "$from_github_username" ]; then
+		INFO "Detected current GitHub username: ${from_github_username}"
+	else
+		WARN "Could not detect GitHub username from .github/renovate.json5, have you removed :assignee property?"
+	fi
 else
 	WARN "Couldn't find .github/renovate.json5, have you changed core project structure?"
+fi
 
+if [ -z "$from_github_username" ]; then
 	if ! GET_INPUT_BOOL "This warning is not fatal, are you sure you want to continue?" "Y"; then
 		INFO "OK, as you wish!"
 		exit 0
