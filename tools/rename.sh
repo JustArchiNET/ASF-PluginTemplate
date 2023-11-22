@@ -181,6 +181,8 @@ if command -v git >/dev/null; then
 	fi
 fi
 
+from_github_username=""
+
 if [ -f "../.github/renovate.json5" ]; then
 	from_github_username="$(grep -F ":assignee(" "../.github/renovate.json5" | cut -d '(' -f 2 | cut -d ')' -f 1)"
 
