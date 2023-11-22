@@ -71,21 +71,23 @@ GET_INPUT_BOOL() {
 	case "$2" in
 		"y"|"Y") helper_text="Y/n" ;;
 		"n"|"N") helper_text="y/N" ;;
-		*) exit 1
+		*) ERROR "Wrong default for GET_INPUT_BOOL()!"; return 1
 	esac
 
-	echo -n "${1} [${helper_text}]: " 1>&2
-	read -r user_input
+	while :; do
+		echo -n "${1} [${helper_text}]: " 1>&2
+		read -r user_input
 
-	if [ -z "$user_input" ]; then
-		user_input="$2"
-	fi
+		if [ -z "$user_input" ]; then
+			user_input="$2"
+		fi
 
-	case "$user_input" in
-		"y"|"Y") return 0 ;;
-		"n"|"N") return 1 ;;
-		*) exit 1
-	esac
+		case "$user_input" in
+			"y"|"Y") return 0 ;;
+			"n"|"N") return 1 ;;
+			*) continue
+		esac
+	done
 }
 
 GET_INPUT_STRING() {
