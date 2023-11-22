@@ -1,0 +1,269 @@
+#!/usr/bin/env sh
+set -eu
+
+# Default settings
+export PRINT_BANNER=1
+export VERBOSITY=3
+
+GET_DATE() {
+	case "$(uname -s)" in
+		"Darwin") date -u ;;
+		*) date -u --rfc-3339=seconds ;;
+	esac
+}
+
+DEBUG() {
+	if [ "$VERBOSITY" -gt 3 ]; then
+		COLOR_DARK_GRAY "$(GET_DATE) [$(basename "$0")] DEBUG: $*"
+	fi
+}
+
+INFO() {
+	if [ "$VERBOSITY" -gt 2 ]; then
+		COLOR_WHITE "$(GET_DATE) [$(basename "$0")] INFO: $*"
+	fi
+}
+
+SUCCESS() {
+	if [ "$VERBOSITY" -gt 2 ]; then
+		COLOR_GREEN "$(GET_DATE) [$(basename "$0")] SUCCESS: $*"
+	fi
+}
+
+WARN() {
+	if [ "$VERBOSITY" -gt 1 ]; then
+		COLOR_YELLOW "$(GET_DATE) [$(basename "$0")] WARN: $*"
+	fi
+}
+
+ERROR() {
+	if [ "$VERBOSITY" -gt 0 ]; then
+		COLOR_RED "$(GET_DATE) [$(basename "$0")] ERROR: $*"
+	fi
+}
+
+COLOR_DARK_GRAY() {
+	echo "\033[1;30m$*\033[0m"
+}
+
+COLOR_RED() {
+	echo "\033[1;31m$*\033[0m"
+}
+
+COLOR_GREEN() {
+	echo "\033[1;32m$*\033[0m"
+}
+
+COLOR_YELLOW() {
+	echo "\033[1;33m$*\033[0m"
+}
+
+COLOR_WHITE() {
+	echo "\033[1;37m$*\033[0m"
+}
+
+GET_INPUT_BOOL() {
+	if [ "$#" -ne 2 ]; then
+		ERROR "Wrong GET_INPUT_BOOL() args!"
+		return 1
+	fi
+
+	case "$2" in
+		"y"|"Y") helper_text="Y/n" ;;
+		"n"|"N") helper_text="y/N" ;;
+		*) exit 1
+	esac
+
+	echo -n "${1} [${helper_text}]: " 1>&2
+	read -r user_input
+
+	if [ -z "$user_input" ]; then
+		user_input="$2"
+	fi
+
+	case "$user_input" in
+		"y"|"Y") return 0 ;;
+		"n"|"N") return 1 ;;
+		*) exit 1
+	esac
+}
+
+GET_INPUT_STRING() {
+	if [ "$#" -ne 2 ]; then
+		ERROR "Wrong GET_INPUT_STRING() args!"
+		return 1
+	fi
+
+	echo -n "${1} ["${2}"]: " 1>&2
+	read -r user_input
+
+	if [ -z "$user_input" ]; then
+		echo "$2"
+		return
+	fi
+
+	echo "$user_input"
+}
+
+PRINT_HEADER() {
+	if [ "$PRINT_BANNER" -eq 0 ]; then
+		return
+	fi
+
+	INFO "     _     ____   _____"
+	INFO "    / \   / ___| |  ___|"
+	INFO "   / _ \  \___ \ | |_"
+	INFO "  / ___ \  ___) ||  _|"
+	INFO " /_/   \_\|____/ |_|"
+	INFO "------------------------"
+}
+
+SED_REPLACE_FILE() {
+	if [ "$#" -ne 3 ]; then
+		ERROR "Wrong SED_REPLACE_FILE() args!"
+		return 1
+	fi
+
+	sed "s/${1}/${2}/g" "$3" > "${3}.new"
+	mv "${3}.new" "$3"
+}
+
+# Main logic
+OS_TYPE="$(uname -s)"
+
+case "$OS_TYPE" in
+	"Darwin") SCRIPT_PATH="$(readlink "$0")" ;;
+	*) SCRIPT_PATH="$(readlink -f "$0")" ;;
+esac
+
+SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
+
+# Main script
+cd "$SCRIPT_DIR"
+
+trap "trap - TERM && kill -- -$$" INT TERM
+
+PRINT_HEADER
+
+if [ ! -f "../Directory.Build.props" ]; then
+	ERROR "Couldn't find Directory.Build.props, have you changed core project structure?"
+
+	if ! GET_INPUT_BOOL "This script will probably not work due to above, are you sure you want to continue?" "N"; then
+		INFO "OK, as you wish!"
+		exit 0
+	fi
+fi
+
+from_plugin_name="$(grep -F "<PluginName>" "../Directory.Build.props" | cut -d '>' -f 2 | cut -d '<' -f 1)"
+
+if [ -n "$from_plugin_name" ]; then
+	INFO "Detected current plugin name: ${from_plugin_name}"
+else
+	WARN "Could not detect plugin name from Directory.Build.props, have you changed core project properties?"
+
+	if ! GET_INPUT_BOOL "This script will probably not work due to above, are you sure you want to continue?" "N"; then
+		INFO "OK, as you wish!"
+		exit 0
+	fi
+
+	from_plugin_name="$(GET_INPUT_STRING "OK, from what plugin name you want to rename?" "MyAwesomePlugin")"
+fi
+
+default_github_username="JustArchi"
+
+if command -v git >/dev/null; then
+	git_potential_username="$(git config --get remote.origin.url | sed 's/https:\/\/github\.com\///g' | cut -d '/' -f 1)"
+
+	if [ -n "$git_potential_username" ]; then
+		default_github_username="$git_potential_username"
+	fi
+fi
+
+if [ -f "../.github/renovate.json5" ]; then
+	from_github_username="$(grep -F ":assignee(" "../.github/renovate.json5" | cut -d '(' -f 2 | cut -d ')' -f 1)"
+
+	INFO "Detected current GitHub username: ${from_github_username}"
+else
+	WARN "Couldn't find .github/renovate.json5, have you changed core project structure?"
+
+	if ! GET_INPUT_BOOL "This warning is not fatal, are you sure you want to continue?" "Y"; then
+		INFO "OK, as you wish!"
+		exit 0
+	fi
+
+	from_github_username="$(GET_INPUT_STRING "OK, from what GitHub username you want to rename?" "$default_github_username")"
+fi
+
+to_plugin_name="$(GET_INPUT_STRING "Please type target plugin name that you want to use, we recommend PascalCase" "MyAwesomePlugin")"
+to_github_username="$(GET_INPUT_STRING "Please type your GitHub username" "$default_github_username")"
+
+if ! GET_INPUT_BOOL "Confirm rename: ${from_plugin_name} -> ${to_plugin_name} and ${from_github_username} -> ${to_github_username}:" "Y"; then
+	INFO "OK, as you wish!"
+	exit 0
+fi
+
+INFO "Please wait..."
+
+if [ "$from_github_username" != "$to_github_username" ]; then
+	if [ -f "../.github/renovate.json5" ]; then
+		INFO "Processing .github/renovate.json5..."
+		SED_REPLACE_FILE ":assignee(${from_github_username})" ":assignee(${to_github_username})" "../.github/renovate.json5"
+	else
+		WARN "Couldn't find .github/renovate.json5, moving on..."
+	fi
+fi
+
+if [ "$from_plugin_name" != "$to_plugin_name" ]; then
+	if [ -f "../.github/workflows/publish.yml" ]; then
+		INFO "Processing .github/workflows/publish.yml..."
+		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../.github/workflows/publish.yml"
+	else
+		WARN "Couldn't find .github/workflows/publish.yml, moving on..."
+	fi
+
+	if [ -f "../${from_plugin_name}/${from_plugin_name}.csproj" ]; then
+		INFO "Processing ${from_plugin_name}/${from_plugin_name}.csproj..."
+		mv "../${from_plugin_name}/${from_plugin_name}.csproj" "../${from_plugin_name}/${to_plugin_name}.csproj"
+	else
+		WARN "Couldn't find ${from_plugin_name}/${from_plugin_name}.csproj, moving on..."
+	fi
+
+	if [ -f "../${from_plugin_name}/${from_plugin_name}.cs" ]; then
+		INFO "Processing ${from_plugin_name}/${from_plugin_name}.cs..."
+		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../${from_plugin_name}/${from_plugin_name}.cs"
+		mv "../${from_plugin_name}/${from_plugin_name}.cs" "../${from_plugin_name}/${to_plugin_name}.cs"
+	else
+		WARN "Couldn't find ${from_plugin_name}/${from_plugin_name}.cs, moving on..."
+	fi
+
+	if [ -d "../${from_plugin_name}" ]; then
+		INFO "Processing ${from_plugin_name} (directory)..."
+		mv "../${from_plugin_name}" "../${to_plugin_name}"
+	else
+		WARN "Couldn't find ${from_plugin_name} (directory), moving on..."
+	fi
+
+	if [ -f "../${from_plugin_name}.sln" ]; then
+		INFO "Processing ${from_plugin_name}.sln..."
+		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../${from_plugin_name}.sln"
+		mv "../${from_plugin_name}.sln" "../${to_plugin_name}.sln"
+	else
+		WARN "Couldn't find ${from_plugin_name}.sln, moving on..."
+	fi
+
+	if [ -f "../${from_plugin_name}.sln.DotSettings" ]; then
+		INFO "Processing ${from_plugin_name}.sln.DotSettings..."
+		mv "../${from_plugin_name}.sln.DotSettings" "../${to_plugin_name}.sln.DotSettings"
+	else
+		WARN "Couldn't find ${from_plugin_name}.sln.DotSettings, moving on..."
+	fi
+
+	if [ -f "../Directory.Build.props" ]; then
+		INFO "Processing Directory.Build.props..."
+		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../Directory.Build.props"
+	else
+		WARN "Couldn't find Directory.Build.props, moving on..."
+	fi
+fi
+
+SUCCESS "All done! :3"

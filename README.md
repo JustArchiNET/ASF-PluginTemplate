@@ -74,7 +74,9 @@ Using centrally-managed NuGet packages is crucial in regards to integration with
 
 ### Renaming `MyAwesomePlugin`
 
-You might be interested in renaming `MyAwesomePlugin` project into the one that suits your plugin. We've tried to keep the minimum amount of references, and we're listing here all of the places you should keep in mind:
+You might be interested in renaming `MyAwesomePlugin` project into the one that suits your plugin. For doing that, we recommend using our intuitive **[`tools/rename.sh`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/tools/rename.sh)** script, which you can call using your favourite POSIX sh compliant shell. It's also compatible with WSL.
+
+If for any reason you'd prefer to rename manually, we've tried to keep the minimum amount of references, and we're listing here all of the places you should keep in mind:
 - **[`MyAwesomePlugin.csproj`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.csproj)**, renaming should be enough.
 - **[`MyAwesomePlugin.cs`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L6-L16)**, along with the update of `MyAwesomePlugin` class name (and included references to it).
 - **[`MyAwesomePlugin`](https://github.com/JustArchiNET/ASF-PluginTemplate/tree/main/MyAwesomePlugin)** directory, which holds above files.
