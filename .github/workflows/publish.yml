@@ -122,7 +122,7 @@ jobs:
         }
 
     - name: Upload plugin artifact
-      uses: actions/upload-artifact@v4.0.0
+      uses: actions/upload-artifact@v4.3.0
       with:
         name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}
         path: out/${{ env.PLUGIN_NAME }}.zip
@@ -169,13 +169,13 @@ jobs:
         )
 
     - name: Upload SHA512SUMS
-      uses: actions/upload-artifact@v4.0.0
+      uses: actions/upload-artifact@v4.3.0
       with:
         name: SHA512SUMS
         path: out/SHA512SUMS
 
     - name: Upload SHA512SUMS.sign
-      uses: actions/upload-artifact@v4.0.0
+      uses: actions/upload-artifact@v4.3.0
       if: ${{ env.GPG_PRIVATE_KEY != null }}
       with:
         name: SHA512SUMS.sign
