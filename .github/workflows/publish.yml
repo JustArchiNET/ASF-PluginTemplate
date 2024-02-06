@@ -182,7 +182,7 @@ jobs:
         path: out/SHA512SUMS.sign
 
     - name: Create GitHub release
-      uses: ncipollo/release-action@v1.13.0
+      uses: ncipollo/release-action@v1.14.0
       with:
         artifacts: "out/*"
         bodyFile: .github/RELEASE_TEMPLATE.md
