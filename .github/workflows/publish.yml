@@ -8,7 +8,6 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_SDK_VERSION: 8.0
   GPG_PRIVATE_KEY: ${{ secrets.ARCHIBOT_GPG_PRIVATE_KEY }} # Optional, if secret not provided, will skip signing SHA512SUMS with GPG key. You can specify your own credentials if you'd like to, simply change ARCHIBOT_GPG_PRIVATE_KEY here to the one you want to use
-  PLUGIN_NAME: MyAwesomePlugin
 
 permissions:
   contents: read
@@ -21,6 +20,8 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
+    outputs:
+      PLUGIN_NAME: ${{ steps.getname.outputs.info }}
 
     steps:
     - name: Checkout code
@@ -28,6 +29,13 @@ jobs:
       with:
         show-progress: false
         submodules: recursive
+
+    - name: Get name
+      id: getname
+      uses: mavrosxristoforos/get-xml-info@2.0
+      with:
+        xml-file: 'Directory.Build.props'
+        xpath: '//PluginName'
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4.0.0
@@ -39,6 +47,8 @@ jobs:
 
     - name: Publish plugin on Unix
       if: startsWith(matrix.os, 'macos-') || startsWith(matrix.os, 'ubuntu-')
+      env:
+        PLUGIN_NAME: ${{ steps.getname.outputs.info }}
       shell: sh
       run: |
         set -eu
@@ -91,6 +101,8 @@ jobs:
 
     - name: Publish plugin on Windows
       if: startsWith(matrix.os, 'windows-')
+      env:
+        PLUGIN_NAME: ${{ steps.getname.outputs.info }}
       shell: pwsh
       run: |
         Set-StrictMode -Version Latest
@@ -124,8 +136,8 @@ jobs:
     - name: Upload plugin artifact
       uses: actions/upload-artifact@v4.3.1
       with:
-        name: ${{ matrix.os }}_${{ env.PLUGIN_NAME }}
-        path: out/${{ env.PLUGIN_NAME }}.zip
+        name: ${{ matrix.os }}_${{ steps.getname.outputs.info }}
+        path: out/${{ steps.getname.outputs.info }}.zip
 
   release:
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
@@ -144,7 +156,7 @@ jobs:
     - name: Download plugin artifact from ubuntu-latest
       uses: actions/download-artifact@v4.1.4
       with:
-        name: ubuntu-latest_${{ env.PLUGIN_NAME }}
+        name: ubuntu-latest_${{ needs.publish.outputs.PLUGIN_NAME }}
         path: out
 
     - name: Import GPG key for signing
@@ -187,6 +199,6 @@ jobs:
         artifacts: "out/*"
         bodyFile: .github/RELEASE_TEMPLATE.md
         makeLatest: false
-        name: ${{ env.PLUGIN_NAME }} V${{ github.ref_name }}
+        name: ${{ needs.publish.outputs.PLUGIN_NAME }} V${{ github.ref_name }}
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
