@@ -224,13 +224,6 @@ if [ "$from_github_username" != "$to_github_username" ]; then
 fi
 
 if [ "$from_plugin_name" != "$to_plugin_name" ]; then
-	if [ -f "../.github/workflows/publish.yml" ]; then
-		INFO "Processing .github/workflows/publish.yml..."
-		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../.github/workflows/publish.yml"
-	else
-		WARN "Couldn't find .github/workflows/publish.yml, moving on..."
-	fi
-
 	if [ -f "../${from_plugin_name}/${from_plugin_name}.csproj" ]; then
 		INFO "Processing ${from_plugin_name}/${from_plugin_name}.csproj..."
 		mv "../${from_plugin_name}/${from_plugin_name}.csproj" "../${from_plugin_name}/${to_plugin_name}.csproj"

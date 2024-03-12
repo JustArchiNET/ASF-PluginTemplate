@@ -83,7 +83,6 @@ If for any reason you'd prefer to rename manually, we've tried to keep the minim
 - **[`MyAwesomePlugin.sln`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.sln#L6)**, along with the update of `MyAwesomePlugin` reference in the `sln` file.
 - **[`MyAwesomePlugin.sln.DotSettings`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.sln.DotSettings)**, renaming to match the `sln` file above should be enough.
 - **[`Directory.Build.props`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/Directory.Build.props#L5)**, in particular `<PluginName>MyAwesomePlugin</PluginName>` line.
-- **[`publish.yml`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/.github/workflows/publish.yml#L12)**, in particular `PLUGIN_NAME: MyAwesomePlugin` line.
 
 Nothing else should be required to the best of our knowledge.
 

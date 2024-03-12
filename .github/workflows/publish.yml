@@ -21,7 +21,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     outputs:
-      PLUGIN_NAME: ${{ steps.getname.outputs.info }}
+      PLUGIN_NAME: ${{ steps.plugin-name.outputs.info }}
 
     steps:
     - name: Checkout code
@@ -30,8 +30,8 @@ jobs:
         show-progress: false
         submodules: recursive
 
-    - name: Get name
-      id: getname
+    - name: Parse plugin name from Directory.Build.props
+      id: plugin-name
       uses: mavrosxristoforos/get-xml-info@2.0
       with:
         xml-file: 'Directory.Build.props'
@@ -48,7 +48,7 @@ jobs:
     - name: Publish plugin on Unix
       if: startsWith(matrix.os, 'macos-') || startsWith(matrix.os, 'ubuntu-')
       env:
-        PLUGIN_NAME: ${{ steps.getname.outputs.info }}
+        PLUGIN_NAME: ${{ steps.plugin-name.outputs.info }}
       shell: sh
       run: |
         set -eu
@@ -102,7 +102,7 @@ jobs:
     - name: Publish plugin on Windows
       if: startsWith(matrix.os, 'windows-')
       env:
-        PLUGIN_NAME: ${{ steps.getname.outputs.info }}
+        PLUGIN_NAME: ${{ steps.plugin-name.outputs.info }}
       shell: pwsh
       run: |
         Set-StrictMode -Version Latest
@@ -136,8 +136,8 @@ jobs:
     - name: Upload plugin artifact
       uses: actions/upload-artifact@v4.3.1
       with:
-        name: ${{ matrix.os }}_${{ steps.getname.outputs.info }}
-        path: out/${{ steps.getname.outputs.info }}.zip
+        name: ${{ matrix.os }}_${{ steps.plugin-name.outputs.info }}
+        path: out/${{ steps.plugin-name.outputs.info }}.zip
 
   release:
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
