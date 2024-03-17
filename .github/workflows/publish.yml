@@ -74,11 +74,11 @@ jobs:
                 # We prefer to use zip on OS X as 7z implementation on that OS doesn't handle file permissions (chmod +x)
                 if command -v zip >/dev/null; then
                     (
-                        cd "${GITHUB_WORKSPACE}/out/plugin"
-                        zip -q -r $zip_args "../${PLUGIN_NAME}.zip" .
+                        cd "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}"
+                        zip -q -r $zip_args "../../${PLUGIN_NAME}.zip" .
                     )
                 elif command -v 7z >/dev/null; then
-                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/*"
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}/*"
                 else
                     echo "ERROR: No supported zip tool!"
                     return 1
@@ -86,11 +86,11 @@ jobs:
                 ;;
             *)
                 if command -v 7z >/dev/null; then
-                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/*"
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}/*"
                 elif command -v zip >/dev/null; then
                     (
-                        cd "${GITHUB_WORKSPACE}/out/plugin"
-                        zip -q -r $zip_args "../${PLUGIN_NAME}.zip" .
+                        cd "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}"
+                        zip -q -r $zip_args "../../${PLUGIN_NAME}.zip" .
                     )
                 else
                     echo "ERROR: No supported zip tool!"
@@ -127,7 +127,7 @@ jobs:
         }
 
         # Create the final zip file
-        7z a -bd -slp -tzip -mm=Deflate $compressionArgs "out\$env:PLUGIN_NAME.zip" "$env:GITHUB_WORKSPACE\out\plugin\*"
+        7z a -bd -slp -tzip -mm=Deflate $compressionArgs "out\$env:PLUGIN_NAME.zip" "$env:GITHUB_WORKSPACE\out\plugin\$env:PLUGIN_NAME\*"
 
         if ($LastExitCode -ne 0) {
             throw "Last command failed."

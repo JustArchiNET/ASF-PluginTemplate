@@ -171,14 +171,44 @@ else
 	from_plugin_name="$(GET_INPUT_STRING "OK, from what plugin name you want to rename?" "MyAwesomePlugin")"
 fi
 
+default_github_repo="JustArchiNET/ASF-PluginTemplate"
 default_github_username="JustArchi"
 
 if command -v git >/dev/null; then
-	git_potential_username="$(git config --get remote.origin.url | sed 's/https:\/\/github\.com\///g' | cut -d '/' -f 1)"
+	git_potential_repo="$(git config --get remote.origin.url | sed 's/https:\/\/github\.com\///g' | sed 's/\.git//g')"
+
+	if [ -n "$git_potential_repo" ]; then
+		default_github_repo="$git_potential_repo"
+	fi
+
+	git_potential_username="$(echo "$git_potential_repo" | cut -d '/' -f 1)"
 
 	if [ -n "$git_potential_username" ]; then
 		default_github_username="$git_potential_username"
 	fi
+fi
+
+from_github_repo=""
+
+if [ -f "../${from_plugin_name}/${from_plugin_name}.cs" ]; then
+	from_github_repo="$(grep -F "public string RepositoryName => " "../${from_plugin_name}/${from_plugin_name}.cs" | cut -d '"' -f 2)"
+
+	if [ -n "$from_github_repo" ]; then
+		INFO "Detected current GitHub repo: ${from_github_repo}"
+	else
+		WARN "Could not detect GitHub repo from ${from_plugin_name}/${from_plugin_name}.cs, have you removed RepositoryName property?"
+	fi
+else
+	WARN "Couldn't find ${from_plugin_name}/${from_plugin_name}.cs, have you changed core project structure?"
+fi
+
+if [ -z "$from_github_repo" ]; then
+	if ! GET_INPUT_BOOL "This warning is not fatal, are you sure you want to continue?" "Y"; then
+		INFO "OK, as you wish!"
+		exit 0
+	fi
+
+	from_github_repo="$(GET_INPUT_STRING "OK, from what GitHub repository you want to rename?" "$default_github_repo")"
 fi
 
 from_github_username=""
@@ -205,14 +235,24 @@ if [ -z "$from_github_username" ]; then
 fi
 
 to_plugin_name="$(GET_INPUT_STRING "Please type target plugin name that you want to use, we recommend PascalCase" "MyAwesomePlugin")"
+to_github_repo="$(GET_INPUT_STRING "Please type your GitHub repo" "$default_github_repo")"
 to_github_username="$(GET_INPUT_STRING "Please type your GitHub username" "$default_github_username")"
 
-if ! GET_INPUT_BOOL "Confirm rename: ${from_plugin_name} -> ${to_plugin_name} and ${from_github_username} -> ${to_github_username}:" "Y"; then
+if ! GET_INPUT_BOOL "Confirm rename: ${from_plugin_name} -> ${to_plugin_name}, ${from_github_repo} -> ${to_github_repo} and ${from_github_username} -> ${to_github_username}:" "Y"; then
 	INFO "OK, as you wish!"
 	exit 0
 fi
 
 INFO "Please wait..."
+
+if [ "$from_github_repo" != "$to_github_repo" ]; then
+	if [ -f "../${from_plugin_name}/${from_plugin_name}.cs" ]; then
+		INFO "Processing ${from_plugin_name}/${from_plugin_name}.cs..."
+		SED_REPLACE_FILE "${from_github_repo}" "${to_github_repo}" "../${from_plugin_name}/${from_plugin_name}.cs"
+	else
+		WARN "Couldn't find ${from_plugin_name}/${from_plugin_name}.cs, moving on..."
+	fi
+fi
 
 if [ "$from_github_username" != "$to_github_username" ]; then
 	if [ -f "../.github/renovate.json5" ]; then

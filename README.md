@@ -34,6 +34,7 @@ In theory, you don't need to do anything special further, just edit **[`MyAwesom
 ## What's included
 
 - Sample `MyAwesomePlugin` ASF plugin project with `ArchiSteamFarm` reference in git subtree.
+- Project structure supporting `IGitHubPluginUpdates` ASF interface, allowing for convenient plugin updates.
 - Seamless hook into the ASF build process, which simplifies the project structure, as you effectively inherit the default settings official ASF projects are built with. Of course, free to override.
 - GitHub actions CI script, which verifies whether your project is possible to build. You can easily enhance it with unit tests when/if you'll have any.
 - GitHub actions publish script, heavily inspired by ASF build process. Publish script allows you to `git tag` and `git push` selected tag, while CI will build, pack, create release on GitHub and upload the resulting artifacts, automatically.
@@ -48,6 +49,7 @@ In theory, you don't need to do anything special further, just edit **[`MyAwesom
 
 Here we list steps that are **not mandatory**, but worthy to consider after using this repo as a template. While we'd recommend to cover all of those, it's totally alright if you don't. We ordered those according to our recommended priority.
 
+- If you want to use automatic plugin updates, ensure **[`RepositoryName`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L13)** property matches your target repo, this is covered by default in our **[`rename.sh`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/tools/rename.sh)** script. If you want to opt out of that feature, replace **[`IGitHubPluginUpdates`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L11)** interface back to its base `IPlugin` one, and remove **[`RepositoryName`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L13)** property instead.
 - Choose license based on which you want to share your work. If you'd like to use the same one we do, so Apache 2.0, then you don't need to do anything as the plugin template comes with it. If you'd like to use different one, remove **[`LICENSE.txt`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/LICENSE.txt)** file and provide your own. If you've decided to use different license, it's probably also a good idea to update `PackageLicenseExpression` in **[`Directory.Build.props`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/Directory.Build.props#L17)**.
 - Change this **[`README.md`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/README.md)** in any way you want to. You can check **[ASF's README](https://github.com/JustArchiNET/ArchiSteamFarm/blob/main/README.md)** for some inspiration. We recommend at least a short description of what your plugin can do. Updating `<Description>` in **[`Directory.Build.props`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/Directory.Build.props#L15)** also sounds like a good idea.
 - Fill **[`SUPPORT.md`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/.github/SUPPORT.md)** file, so your users can learn where they can ask for help in regards to your plugin.
@@ -78,7 +80,7 @@ You might be interested in renaming `MyAwesomePlugin` project into the one that 
 
 If for any reason you'd prefer to rename manually, we've tried to keep the minimum amount of references, and we're listing here all of the places you should keep in mind:
 - **[`MyAwesomePlugin.csproj`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.csproj)**, renaming should be enough.
-- **[`MyAwesomePlugin.cs`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L6-L16)**, along with the update of `MyAwesomePlugin` class name (and included references to it).
+- **[`MyAwesomePlugin.cs`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L7-L14)**, rename along with `RepositoryName` property, `MyAwesomePlugin` class name and included references to it.
 - **[`MyAwesomePlugin`](https://github.com/JustArchiNET/ASF-PluginTemplate/tree/main/MyAwesomePlugin)** directory, which holds above files.
 - **[`MyAwesomePlugin.sln`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.sln#L6)**, along with the update of `MyAwesomePlugin` reference in the `sln` file.
 - **[`MyAwesomePlugin.sln.DotSettings`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.sln.DotSettings)**, renaming to match the `sln` file above should be enough.
