@@ -126,7 +126,7 @@ SED_REPLACE_FILE() {
 		return 1
 	fi
 
-	sed "s/${1}/${2}/g" "$3" > "${3}.new"
+	sed "s:${1}:${2}:g" "$3" > "${3}.new"
 	mv "${3}.new" "$3"
 }
 
@@ -156,21 +156,7 @@ if [ ! -f "../Directory.Build.props" ]; then
 	fi
 fi
 
-from_plugin_name="$(grep -F "<PluginName>" "../Directory.Build.props" | cut -d '>' -f 2 | cut -d '<' -f 1)"
-
-if [ -n "$from_plugin_name" ]; then
-	INFO "Detected current plugin name: ${from_plugin_name}"
-else
-	WARN "Could not detect plugin name from Directory.Build.props, have you changed core project properties?"
-
-	if ! GET_INPUT_BOOL "This script will probably not work due to above, are you sure you want to continue?" "N"; then
-		INFO "OK, as you wish!"
-		exit 0
-	fi
-
-	from_plugin_name="$(GET_INPUT_STRING "OK, from what plugin name you want to rename?" "MyAwesomePlugin")"
-fi
-
+default_plugin_name="MyAwesomePlugin"
 default_github_repo="JustArchiNET/ASF-PluginTemplate"
 default_github_username="JustArchi"
 
@@ -186,6 +172,27 @@ if command -v git >/dev/null; then
 	if [ -n "$git_potential_username" ]; then
 		default_github_username="$git_potential_username"
 	fi
+
+	git_potential_plugin_name="$(echo "$git_potential_repo" | cut -d '/' -f 2)"
+
+	if [ -n "$git_potential_plugin_name" ]; then
+		default_plugin_name="$git_potential_plugin_name"
+	fi
+fi
+
+from_plugin_name="$(grep -F "<PluginName>" "../Directory.Build.props" | cut -d '>' -f 2 | cut -d '<' -f 1)"
+
+if [ -n "$from_plugin_name" ]; then
+	INFO "Detected current plugin name: ${from_plugin_name}"
+else
+	WARN "Could not detect plugin name from Directory.Build.props, have you changed core project properties?"
+
+	if ! GET_INPUT_BOOL "This script will probably not work due to above, are you sure you want to continue?" "N"; then
+		INFO "OK, as you wish!"
+		exit 0
+	fi
+
+	from_plugin_name="$(GET_INPUT_STRING "OK, from what plugin name you want to rename?" "$default_plugin_name")"
 fi
 
 from_github_repo=""
@@ -234,25 +241,16 @@ if [ -z "$from_github_username" ]; then
 	from_github_username="$(GET_INPUT_STRING "OK, from what GitHub username you want to rename?" "$default_github_username")"
 fi
 
-to_plugin_name="$(GET_INPUT_STRING "Please type target plugin name that you want to use, we recommend PascalCase" "MyAwesomePlugin")"
+to_plugin_name="$(GET_INPUT_STRING "Please type target plugin name that you want to use, we recommend PascalCase" "$default_plugin_name")"
 to_github_repo="$(GET_INPUT_STRING "Please type your GitHub repo" "$default_github_repo")"
 to_github_username="$(GET_INPUT_STRING "Please type your GitHub username" "$default_github_username")"
 
-if ! GET_INPUT_BOOL "Confirm rename: ${from_plugin_name} -> ${to_plugin_name}, ${from_github_repo} -> ${to_github_repo} and ${from_github_username} -> ${to_github_username}:" "Y"; then
+if ! GET_INPUT_BOOL "Confirm rename: ${from_plugin_name} -> ${to_plugin_name} (plugin name), ${from_github_repo} -> ${to_github_repo} (git repo) and ${from_github_username} -> ${to_github_username} (git username):" "Y"; then
 	INFO "OK, as you wish!"
 	exit 0
 fi
 
 INFO "Please wait..."
-
-if [ "$from_github_repo" != "$to_github_repo" ]; then
-	if [ -f "../${from_plugin_name}/${from_plugin_name}.cs" ]; then
-		INFO "Processing ${from_plugin_name}/${from_plugin_name}.cs..."
-		SED_REPLACE_FILE "${from_github_repo}" "${to_github_repo}" "../${from_plugin_name}/${from_plugin_name}.cs"
-	else
-		WARN "Couldn't find ${from_plugin_name}/${from_plugin_name}.cs, moving on..."
-	fi
-fi
 
 if [ "$from_github_username" != "$to_github_username" ]; then
 	if [ -f "../.github/renovate.json5" ]; then
@@ -260,6 +258,15 @@ if [ "$from_github_username" != "$to_github_username" ]; then
 		SED_REPLACE_FILE ":assignee(${from_github_username})" ":assignee(${to_github_username})" "../.github/renovate.json5"
 	else
 		WARN "Couldn't find .github/renovate.json5, moving on..."
+	fi
+fi
+
+if [ "$from_github_repo" != "$to_github_repo" ]; then
+	if [ -f "../${from_plugin_name}/${from_plugin_name}.cs" ]; then
+		INFO "Processing ${from_plugin_name}/${from_plugin_name}.cs..."
+		SED_REPLACE_FILE "${from_github_repo}" "${to_github_repo}" "../${from_plugin_name}/${from_plugin_name}.cs"
+	else
+		WARN "Couldn't find ${from_plugin_name}/${from_plugin_name}.cs, moving on..."
 	fi
 fi
 
