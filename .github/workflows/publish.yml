@@ -197,10 +197,12 @@ jobs:
       uses: ncipollo/release-action@v1.14.0
       with:
         allowUpdates: true
+        artifactErrorsFailBuild: true
         artifacts: "out/*"
         bodyFile: .github/RELEASE_TEMPLATE.md
         makeLatest: false
         name: ${{ needs.publish.outputs.PLUGIN_NAME }} V${{ github.ref_name }}
         prerelease: true
+        skipIfReleaseExists: true
         token: ${{ secrets.GITHUB_TOKEN }}
         updateOnlyUnreleased: true
