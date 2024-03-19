@@ -203,6 +203,5 @@ jobs:
         makeLatest: false
         name: ${{ needs.publish.outputs.PLUGIN_NAME }} V${{ github.ref_name }}
         prerelease: true
-        skipIfReleaseExists: true
         token: ${{ secrets.GITHUB_TOKEN }}
         updateOnlyUnreleased: true
