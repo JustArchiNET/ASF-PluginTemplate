@@ -136,6 +136,7 @@ jobs:
     - name: Upload plugin artifact
       uses: actions/upload-artifact@v4.3.1
       with:
+        if-no-files-found: error
         name: ${{ matrix.os }}_${{ steps.plugin-name.outputs.info }}
         path: out/${{ steps.plugin-name.outputs.info }}.zip
 
@@ -183,6 +184,7 @@ jobs:
     - name: Upload SHA512SUMS
       uses: actions/upload-artifact@v4.3.1
       with:
+        if-no-files-found: error
         name: SHA512SUMS
         path: out/SHA512SUMS
 
@@ -190,6 +192,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.1
       if: ${{ env.GPG_PRIVATE_KEY != null }}
       with:
+        if-no-files-found: error
         name: SHA512SUMS.sign
         path: out/SHA512SUMS.sign
 
