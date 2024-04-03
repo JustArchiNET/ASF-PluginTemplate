@@ -77,24 +77,18 @@ jobs:
                         cd "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}"
                         zip -q -r $zip_args "../../${PLUGIN_NAME}.zip" .
                     )
-                elif command -v 7z >/dev/null; then
-                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}/*"
                 else
-                    echo "ERROR: No supported zip tool!"
-                    return 1
+                    7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}/*"
                 fi
                 ;;
             *)
                 if command -v 7z >/dev/null; then
                     7z a -bd -slp -tzip -mm=Deflate $seven_zip_args "out/${PLUGIN_NAME}.zip" "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}/*"
-                elif command -v zip >/dev/null; then
+                else
                     (
                         cd "${GITHUB_WORKSPACE}/out/plugin/${PLUGIN_NAME}"
                         zip -q -r $zip_args "../../${PLUGIN_NAME}.zip" .
                     )
-                else
-                    echo "ERROR: No supported zip tool!"
-                    return 1
                 fi
                 ;;
         esac
