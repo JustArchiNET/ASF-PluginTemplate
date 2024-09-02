@@ -255,7 +255,7 @@ INFO "Please wait..."
 if [ "$from_github_username" != "$to_github_username" ]; then
 	if [ -f "../.github/renovate.json5" ]; then
 		INFO "Processing .github/renovate.json5..."
-		SED_REPLACE_FILE ":assignee(${from_github_username})" ":assignee(${to_github_username})" "../.github/renovate.json5"
+		SED_REPLACE_FILE "\\:assignee(${from_github_username})" "\\:assignee(${to_github_username})" "../.github/renovate.json5"
 	else
 		WARN "Couldn't find .github/renovate.json5, moving on..."
 	fi
