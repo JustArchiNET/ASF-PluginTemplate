@@ -59,7 +59,7 @@ jobs:
             exit
         fi
 
-        git config --global --add safe.directory $(pwd)
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
         git config -f .gitmodules submodule.ArchiSteamFarm.branch "$LATEST_ASF_RELEASE"
 
