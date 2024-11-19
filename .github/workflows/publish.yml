@@ -20,6 +20,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
+
     outputs:
       PLUGIN_NAME: ${{ steps.plugin-name.outputs.info }}
 
@@ -30,13 +31,6 @@ jobs:
         show-progress: false
         submodules: recursive
 
-    - name: Parse plugin name from Directory.Build.props
-      id: plugin-name
-      uses: mavrosxristoforos/get-xml-info@2.0
-      with:
-        xml-file: 'Directory.Build.props'
-        xpath: '//PluginName'
-
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4.1.0
       with:
@@ -44,6 +38,13 @@ jobs:
 
     - name: Verify .NET Core
       run: dotnet --info
+
+    - name: Parse plugin name from Directory.Build.props
+      id: plugin-name
+      uses: mavrosxristoforos/get-xml-info@2.0
+      with:
+        xml-file: 'Directory.Build.props'
+        xpath: '//PluginName'
 
     - name: Publish plugin on Unix
       if: startsWith(matrix.os, 'macos-') || startsWith(matrix.os, 'ubuntu-')
