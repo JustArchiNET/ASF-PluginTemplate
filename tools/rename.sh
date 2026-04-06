@@ -293,19 +293,19 @@ if [ "$from_plugin_name" != "$to_plugin_name" ]; then
 		WARN "Couldn't find ${from_plugin_name} (directory), moving on..."
 	fi
 
-	if [ -f "../${from_plugin_name}.sln" ]; then
-		INFO "Processing ${from_plugin_name}.sln..."
-		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../${from_plugin_name}.sln"
-		mv "../${from_plugin_name}.sln" "../${to_plugin_name}.sln"
+	if [ -f "../${from_plugin_name}.slnx" ]; then
+		INFO "Processing ${from_plugin_name}.slnx..."
+		SED_REPLACE_FILE "$from_plugin_name" "$to_plugin_name" "../${from_plugin_name}.slnx"
+		mv "../${from_plugin_name}.slnx" "../${to_plugin_name}.slnx"
 	else
-		WARN "Couldn't find ${from_plugin_name}.sln, moving on..."
+		WARN "Couldn't find ${from_plugin_name}.slnx, moving on..."
 	fi
 
-	if [ -f "../${from_plugin_name}.sln.DotSettings" ]; then
-		INFO "Processing ${from_plugin_name}.sln.DotSettings..."
-		mv "../${from_plugin_name}.sln.DotSettings" "../${to_plugin_name}.sln.DotSettings"
+	if [ -f "../${from_plugin_name}.slnx.DotSettings" ]; then
+		INFO "Processing ${from_plugin_name}.slnx.DotSettings..."
+		mv "../${from_plugin_name}.slnx.DotSettings" "../${to_plugin_name}.slnx.DotSettings"
 	else
-		WARN "Couldn't find ${from_plugin_name}.sln.DotSettings, moving on..."
+		WARN "Couldn't find ${from_plugin_name}.slnx.DotSettings, moving on..."
 	fi
 
 	if [ -f "../Directory.Build.props" ]; then

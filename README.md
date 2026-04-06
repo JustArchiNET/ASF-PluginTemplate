@@ -86,8 +86,8 @@ If for any reason you'd prefer to rename manually, we've tried to keep the minim
 - **[`MyAwesomePlugin.csproj`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.csproj)**, renaming should be enough.
 - **[`MyAwesomePlugin.cs`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin/MyAwesomePlugin.cs#L7-L14)**, rename along with `RepositoryName` property, `MyAwesomePlugin` class name and included references to it.
 - **[`MyAwesomePlugin`](https://github.com/JustArchiNET/ASF-PluginTemplate/tree/main/MyAwesomePlugin)** directory, which holds above files.
-- **[`MyAwesomePlugin.sln`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.sln#L6)**, along with the update of `MyAwesomePlugin` reference in the `sln` file.
-- **[`MyAwesomePlugin.sln.DotSettings`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.sln.DotSettings)**, renaming to match the `sln` file above should be enough.
+- **[`MyAwesomePlugin.slnx`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.slnx#L10)**, along with the update of `MyAwesomePlugin` reference in the `slnx` file.
+- **[`MyAwesomePlugin.slnx.DotSettings`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/MyAwesomePlugin.slnx.DotSettings)**, renaming to match the `slnx` file above should be enough.
 - **[`Directory.Build.props`](https://github.com/JustArchiNET/ASF-PluginTemplate/blob/main/Directory.Build.props#L5)**, in particular `<PluginName>MyAwesomePlugin</PluginName>` line.
 
 Nothing else should be required to the best of our knowledge.
