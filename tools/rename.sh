@@ -221,12 +221,12 @@ fi
 from_github_username=""
 
 if [ -f "../.github/renovate.json5" ]; then
-	from_github_username="$(grep -F ":assignee(" "../.github/renovate.json5" | cut -d '(' -f 2 | cut -d ')' -f 1)"
+	from_github_username="$(grep -F ":reviewer(" "../.github/renovate.json5" | cut -d '(' -f 2 | cut -d ')' -f 1)"
 
 	if [ -n "$from_github_username" ]; then
 		INFO "Detected current GitHub username: ${from_github_username}"
 	else
-		WARN "Could not detect GitHub username from .github/renovate.json5, have you removed :assignee property?"
+		WARN "Could not detect GitHub username from .github/renovate.json5, have you removed :reviewer property?"
 	fi
 else
 	WARN "Couldn't find .github/renovate.json5, have you changed core project structure?"
@@ -255,7 +255,7 @@ INFO "Please wait..."
 if [ "$from_github_username" != "$to_github_username" ]; then
 	if [ -f "../.github/renovate.json5" ]; then
 		INFO "Processing .github/renovate.json5..."
-		SED_REPLACE_FILE "\\:assignee(${from_github_username})" "\\:assignee(${to_github_username})" "../.github/renovate.json5"
+		SED_REPLACE_FILE "\\:reviewer(${from_github_username})" "\\:reviewer(${to_github_username})" "../.github/renovate.json5"
 	else
 		WARN "Couldn't find .github/renovate.json5, moving on..."
 	fi
