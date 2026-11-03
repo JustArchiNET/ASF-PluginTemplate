@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ArchiSteamFarm.Core;
 using ArchiSteamFarm.Plugins.Interfaces;
@@ -13,7 +14,7 @@ internal sealed class MyAwesomePlugin : IGitHubPluginUpdates {
 	public string RepositoryName => "JustArchiNET/ASF-PluginTemplate";
 	public Version Version => typeof(MyAwesomePlugin).Assembly.GetName().Version ?? throw new InvalidOperationException(nameof(Version));
 
-	public Task OnLoaded() {
+	public Task OnLoaded(CancellationToken cancellationToken = default) {
 		ASF.ArchiLogger.LogGenericInfo($"Hello {Name}!");
 
 		return Task.CompletedTask;
